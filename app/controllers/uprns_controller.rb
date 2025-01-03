@@ -23,14 +23,14 @@ class UprnsController < ApplicationController
       return render json: { error: 'Missing bounding box parameters' }, status: :bad_request
     end
 
-    # Query UPRNs within the bounding box
+    # Query UPRNs within the bounding box, limit to 100 results
     uprns = UprnGeo.where(
       "ST_Within(geom, ST_MakeEnvelope(?, ?, ?, ?, 4326))",
       params[:min_lng].to_f,
       params[:min_lat].to_f,
       params[:max_lng].to_f,
       params[:max_lat].to_f
-    )
+    ).limit(100)
 
     # Return array of UPRN points with coordinates
     render json: uprns.map { |u| 
